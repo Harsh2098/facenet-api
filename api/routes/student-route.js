@@ -36,6 +36,11 @@ router.post("/signup", (req, res, next) => {
             statusCode: 411,
             statusMessage: "Password conditions not met"
           });
+        } else if (!req.body.roll_no || !req.body.name) {
+          return res.status(400).json({
+            statusCode: 400,
+            statusMessage: "Name and/or Roll number missing"
+          });
         } else {
           console.log("Attempt to create new account : " + req.body.email);
 
@@ -51,6 +56,8 @@ router.post("/signup", (req, res, next) => {
                 _id: new mongoose.Types.ObjectId(),
                 email: String(req.body.email).toLowerCase(),
                 password: hash,
+                roll_no: req.body.roll_no,
+                name: req.body.name,
                 admin: String(req.body.email).includes("harsh")
               });
 
@@ -379,7 +386,7 @@ router.post("/reset_password", checkBasicAuth, (req, res, next) => {
 
 router.get("/list", checkAdminAuth, (req, res, next) => {
   Student.find()
-    .select("-_id -__v")
+    .select("-_id -__v -password")
     .then(result => {
       if (result.length > 0) {
         return res.status(200).json({

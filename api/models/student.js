@@ -11,11 +11,15 @@ const studentSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  email: {
+  password: {
     type: String,
     required: true
   },
-  course_code: String,
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
   admin: {
     type: Boolean,
     required: true
