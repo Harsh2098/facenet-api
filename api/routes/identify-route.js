@@ -2,9 +2,11 @@ const express = require("express");
 const { exec } = require("child_process");
 const router = express.Router();
 
+const checkBasicAuth = require("../auth/check-basic-auth");
+
 const Student = require("../models/student");
 
-router.post("/", (req, res, next) => {
+router.post("/", checkBasicAuth, (req, res, next) => {
   console.log("Face identification requested");
 
   if (!req.files) {

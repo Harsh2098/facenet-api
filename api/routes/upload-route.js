@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
+const checkBasicAuth = require("../auth/check-basic-auth");
+
 const Student = require("../models/student");
 
-router.post("/image", (req, res, next) => {
+router.post("/image", checkBasicAuth, (req, res, next) => {
   console.log("Upload face requested");
 
   if (!req.files) {

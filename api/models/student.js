@@ -11,6 +11,10 @@ const studentSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  email: {
+    type: String,
+    required: true
+  },
   course_code: String,
   admin: {
     type: Boolean,
