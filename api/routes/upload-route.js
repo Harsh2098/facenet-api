@@ -13,10 +13,10 @@ router.post("/image", checkBasicAuth, (req, res, next) => {
       statusCode: 400,
       statusMessage: "File not uploaded"
     });
-  } else if (!req.body.name || !req.body.roll_no) {
+  } else if (!req.body.roll_no) {
     return res.status(400).json({
       statusCode: 400,
-      statusMessage: "Name or Roll Number not specified"
+      statusMessage: "Roll Number not specified"
     });
   } else {
     Student.findOne({
@@ -28,9 +28,9 @@ router.post("/image", checkBasicAuth, (req, res, next) => {
 
         if (student) {
           let photo = req.files.photo;
-          photo.mv("./core/known/" + req.body.name + ".jpg");
+          photo.mv("./core/known/" + student.name + ".jpg");
           statusCode = 200;
-          statusMessage = "File uploaded successfully";
+          statusMessage = "File uploaded/replaced successfully";
         } else {
           statusCode = 404;
           statusMessage = "Student with given roll number does not exist";
