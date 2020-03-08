@@ -234,6 +234,13 @@ router.post("/change_password", checkBasicAuth, (req, res, next) => {
 });
 
 router.delete("/delete", checkAdminAuth, (req, res, next) => {
+  if (!req.body.email) {
+    return res.status(400).json({
+      statusCode: 400,
+      statusMessage: "Email to delete missing"
+    });
+  }
+
   Student.findOneAndDelete({
     email: req.body.email
   })
@@ -258,7 +265,7 @@ router.delete("/delete", checkAdminAuth, (req, res, next) => {
     });
 });
 
-router.post("/reset_password", (req, res, next) => {
+router.post("/reset_password", checkBasicAuth, (req, res, next) => {
   if (!req.body.email) {
     return res.status(400).json({
       statusCode: 400,
