@@ -16,7 +16,7 @@ router.post("/", (req, res, next) => {
     let photo = req.files.photo;
     photo.mv("./core/identification_image.jpg");
 
-    exec("cd core && python3 identify_face_image.py", function(
+    exec("rm core/unknown/* && python3 core/splitfaces.py", function(
       error,
       stdout,
       stderr
@@ -24,17 +24,12 @@ router.post("/", (req, res, next) => {
       console.log(stdout);
       var responseList = stdout.split(/\r?\n/);
 
-      var name, probability;
       var successful = false;
+      var noOfFaces = 0;
       responseList.forEach(function(item) {
-        if (item.includes("Name: ")) {
-          name = item.replace("Name: ", "");
-        }
-        if (item.includes("Probability: ")) {
-          item = item.replace("Probability: ", "");
-          item = item.replace("]", "");
-          item = item.replace("[", "");
-          probability = parseFloat(item);
+        if (item.includes("Number of faces detected: ")) {
+          item = item.replace("Number of faces detected: ", "");
+          noOfFaces = parseInt(item);
         }
         if (item.includes("Completed")) {
           successful = true;
@@ -42,40 +37,56 @@ router.post("/", (req, res, next) => {
       });
 
       if (successful) {
-        Student.findOne({
-          name: name
-        })
-          .exec()
-          .then(student => {
-            if (student) {
-              return res.status(200).json({
-                statusCode: 200,
-                statusMessage: "Face identification successful",
-                roll_no: student.roll_no,
-                course_code: student.course_code,
-                name: name,
-                probability: probability
-              });
-            } else {
-              return res.status(400).json({
-                statusCode: 400,
-                statusMessage: "Student with given name does not exist"
-              });
+        exec(
+          "face_recognition --show-distance true --cpus -1 ./core/known ./core/unknown | cut -d ',' -f2",
+          function(error, stdout, stderr) {
+            console.log(stdout);
+
+            var responseList = stdout.split(/\r?\n/);
+            responseList.pop();
+
+            var studentList = [];
+            var unknownStudentCount = 0;
+
+            for (index in responseList) {
+              Student.findOne({
+                name: responseList[index]
+              })
+                .select("-_id -__v")
+                .exec()
+                .then(student => {
+                  if (student) {
+                    studentList.push(student);
+                  } else {
+                    unknownStudentCount++;
+                  }
+
+                  if (index == responseList.length - 1) {
+                    return res.status(200).json({
+                      statusCode: 200,
+                      statusMessage: "Face recognition successful",
+                      students: studentList,
+                      noOfFaces: noOfFaces,
+                      unknownStudents: unknownStudentCount
+                    });
+                  }
+                })
+                .catch(err => {
+                  console.log({
+                    error: err
+                  });
+                  return res.status(500).json({
+                    statusCode: 500,
+                    statusMessage: "Internal server error"
+                  });
+                });
             }
-          })
-          .catch(err => {
-            console.log({
-              error: err
-            });
-            return res.status(500).json({
-              statusCode: 500,
-              statusMessage: "Internal server error"
-            });
-          });
+          }
+        );
       } else {
         return res.status(400).json({
           statusCode: 400,
-          statusMessage: "Face identification failed"
+          statusMessage: "Faces could not be detected properly"
         });
       }
     });

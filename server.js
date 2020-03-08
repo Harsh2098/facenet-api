@@ -12,9 +12,7 @@ server.listen(port, () => {
 
   console.log("\nRoutes available:\n-----------------\n");
   console.log("(POST) /api/student\n(GET)  /api/student\n");
-  console.log(
-    "(POST) /api/upload/image\n\n(GET)  /api/train\n\n(POST) /api/identify\n"
-  );
+  console.log("(POST) /api/upload/image\n\n(POST) /api/identify\n");
 });
 
 /*

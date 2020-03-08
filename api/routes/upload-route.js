@@ -26,10 +26,7 @@ router.post("/image", (req, res, next) => {
 
         if (student) {
           let photo = req.files.photo;
-          let fileName = req.body.name + "_" + Date.now();
-          photo.mv(
-            "./core/train_img/" + req.body.name + "/" + fileName + ".jpg"
-          );
+          photo.mv("./core/known/" + req.body.name + ".jpg");
           statusCode = 200;
           statusMessage = "File uploaded successfully";
         } else {
