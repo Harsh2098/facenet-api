@@ -2,7 +2,7 @@ const express = require("express");
 const { exec } = require("child_process");
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
+router.post("/", (req, res, next) => {
   console.log("Train model requested");
 
   console.log("Attempting to pre process images");

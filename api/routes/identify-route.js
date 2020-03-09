@@ -48,18 +48,29 @@ router.post("/", (req, res, next) => {
           .exec()
           .then(student => {
             if (student) {
-              return res.status(200).json({
-                statusCode: 200,
-                statusMessage: "Face identification successful",
-                roll_no: student.roll_no,
-                course_code: student.course_code,
-                name: name,
-                probability: probability
-              });
+              if (probability > 0.5) {
+                return res.status(200).json({
+                  statusCode: 200,
+                  statusMessage: "Face identification successful",
+                  roll_no: student.roll_no,
+                  course_code: student.course_code,
+                  name: name,
+                  probability: probability
+                });
+              } else {
+                return res.status(200).json({
+                  statusCode: 200,
+                  statusMessage: "Face identification successful",
+                  roll_no: "",
+                  course_code: "",
+                  name: "unknown_person",
+                  probability: probability
+                });
+              }
             } else {
               return res.status(400).json({
                 statusCode: 400,
-                statusMessage: "Student with given name does not exist"
+                statusMessage: "Student has not registered"
               });
             }
           })
