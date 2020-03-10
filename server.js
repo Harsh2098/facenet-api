@@ -19,7 +19,7 @@ server.listen(port, () => {
     "(POST) /api/student/change_password\n(POST) /api/student/reset_password\n"
   );
   console.log(
-    "(POST) /api/upload/image\n\n(POST)  /api/train (Admin)\n\n(POST) /api/identify\n"
+    "(POST) /api/upload/image\n\n(POST)  /api/train (Admin)\n\n(POST) /api/identify (Admin)\n"
   );
 });
 
