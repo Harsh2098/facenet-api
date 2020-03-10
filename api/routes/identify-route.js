@@ -61,7 +61,7 @@ router.post("/", checkAdminAuth, (req, res, next) => {
                 statusCode: 200,
                 statusMessage: "Face identification successful",
                 students: studentList,
-                probability: probability,
+                probabilities: probability,
                 numberOfFaces: noOfFacesDetected
               });
             } else {

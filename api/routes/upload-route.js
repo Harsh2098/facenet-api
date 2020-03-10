@@ -3,7 +3,9 @@ const router = express.Router();
 
 const Student = require("../models/student");
 
-router.post("/image", (req, res, next) => {
+const checkBasicAuth = require("../auth/check-basic-auth");
+
+router.post("/image", checkBasicAuth, (req, res, next) => {
   console.log("Upload face requested");
 
   if (!req.files) {
@@ -11,14 +13,9 @@ router.post("/image", (req, res, next) => {
       statusCode: 400,
       statusMessage: "File not uploaded"
     });
-  } else if (!req.body.name || !req.body.roll_no) {
-    return res.status(400).json({
-      statusCode: 400,
-      statusMessage: "Name or Roll Number not specified"
-    });
   } else {
     Student.findOne({
-      roll_no: req.body.roll_no
+      roll_no: req.headers.roll_no
     })
       .exec()
       .then(student => {
@@ -26,9 +23,9 @@ router.post("/image", (req, res, next) => {
 
         if (student) {
           let photo = req.files.photo;
-          let fileName = req.body.name + "_" + Date.now();
+          let fileName = student.name + "_" + Date.now();
           photo.mv(
-            "./core/train_img/" + req.body.name + "/" + fileName + ".jpg"
+            "./core/train_img/" + student.name + "/" + fileName + ".jpg"
           );
           statusCode = 200;
           statusMessage = "File uploaded successfully";

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const fs = require("fs");
 
 const checkBasicAuth = require("../auth/check-basic-auth");
 const checkAdminAuth = require("../auth/check-admin-auth");
@@ -120,17 +121,23 @@ router.post("/login", (req, res, next) => {
               {
                 email: user.email,
                 userId: user._id,
-                admin: user.admin
+                admin: user.admin,
+                roll_no: user.roll_no
               },
               process.env.JWT_KEY,
               {
                 expiresIn: "1h"
               }
             );
-            return res.status(200).json({
-              statusCode: 200,
-              statusMessage: "Authentication successful",
-              token: token
+
+            fs.readdir("./core/train_img/" + user.name, (err, files) => {
+              return res.status(200).json({
+                statusCode: 200,
+                statusMessage: "Authentication successful",
+                token: token,
+                isAdmin: user.admin,
+                currentPhotosCount: files.length
+              });
             });
           } else {
             return res.status(401).json({
