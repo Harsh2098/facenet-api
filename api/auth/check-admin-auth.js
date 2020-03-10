@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
   } catch (err) {
     return res.status(401).json({
       statusCode: 401,
-      statusMessage: "Authentication horribly failed"
+      statusMessage: "Admin authentication horribly failed"
     });
   }
 };

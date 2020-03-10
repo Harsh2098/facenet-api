@@ -4,7 +4,9 @@ const router = express.Router();
 
 const Student = require("../models/student");
 
-router.post("/", (req, res, next) => {
+const checkAdminAuth = require("../auth/check-admin-auth");
+
+router.post("/", checkAdminAuth, (req, res, next) => {
   console.log("Face identification requested");
 
   if (!req.files) {
@@ -24,17 +26,23 @@ router.post("/", (req, res, next) => {
       console.log(stdout);
       var responseList = stdout.split(/\r?\n/);
 
-      var name, probability;
-      var successful = false;
+      var nameList = [];
+      var probability = [];
+      var successful = false,
+        noOfFacesDetected = 0;
       responseList.forEach(function(item) {
         if (item.includes("Name: ")) {
-          name = item.replace("Name: ", "");
+          item = item.replace("Name: ", "");
+          nameList.push(item);
         }
         if (item.includes("Probability: ")) {
           item = item.replace("Probability: ", "");
           item = item.replace("]", "");
           item = item.replace("[", "");
-          probability = parseFloat(item);
+          probability.push(parseFloat(item));
+        }
+        if (item.includes("Face Detected: ")) {
+          noOfFacesDetected = parseInt(item.replace("Face Detected:", ""));
         }
         if (item.includes("Completed")) {
           successful = true;
@@ -42,31 +50,20 @@ router.post("/", (req, res, next) => {
       });
 
       if (successful) {
-        Student.findOne({
-          name: name
-        })
+        Student.find()
+          .select("-_id -__v -password -admin")
+          .where("name")
+          .in(nameList)
           .exec()
-          .then(student => {
-            if (student) {
-              if (probability > 0.5) {
-                return res.status(200).json({
-                  statusCode: 200,
-                  statusMessage: "Face identification successful",
-                  roll_no: student.roll_no,
-                  course_code: student.course_code,
-                  name: name,
-                  probability: probability
-                });
-              } else {
-                return res.status(200).json({
-                  statusCode: 200,
-                  statusMessage: "Face identification successful",
-                  roll_no: "",
-                  course_code: "",
-                  name: "unknown_person",
-                  probability: probability
-                });
-              }
+          .then(studentList => {
+            if (studentList) {
+              return res.status(200).json({
+                statusCode: 200,
+                statusMessage: "Face identification successful",
+                students: studentList,
+                probability: probability,
+                numberOfFaces: noOfFacesDetected
+              });
             } else {
               return res.status(400).json({
                 statusCode: 400,
