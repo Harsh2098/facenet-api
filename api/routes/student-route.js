@@ -131,12 +131,14 @@ router.post("/login", (req, res, next) => {
             );
 
             fs.readdir("./core/train_img/" + user.name, (err, files) => {
+              var fileCount = 0;
+              if (files) fileCount = files.length;
               return res.status(200).json({
                 statusCode: 200,
                 statusMessage: "Authentication successful",
                 token: token,
                 isAdmin: user.admin,
-                currentPhotosCount: files.length
+                currentPhotosCount: fileCount
               });
             });
           } else {
