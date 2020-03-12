@@ -10,7 +10,7 @@ router.post("/", checkAdminAuth, (req, res, next) => {
   console.log("Attempting to pre process images");
 
   exec(
-    "rm core/pre_img/bounding* && cd core && python3 data_preprocess.py",
+    "rm /app/core/pre_img/bounding* && cd /app/core && python3 data_preprocess.py",
     function(error, stdout, stderr) {
       console.log(stdout);
       if (stdout.includes("Completed")) {
