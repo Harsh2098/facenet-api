@@ -8,6 +8,7 @@ RUN apt-get update
 RUN apt-get install -y python3
 RUN apt install -y python3-pip
 RUN apt-get install -y libsm6 libxext6 libxrender-dev
+RUN apt-get install nano
 
 RUN pip3 install tensorflow
 RUN pip3 install scipy
