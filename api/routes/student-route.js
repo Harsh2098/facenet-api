@@ -59,7 +59,7 @@ router.post("/signup", (req, res, next) => {
                 password: hash,
                 roll_no: req.body.roll_no,
                 name: req.body.name,
-                admin: String(req.body.email).includes("harsh")
+                admin: req.body.isAdmin
               });
 
               newStudent
