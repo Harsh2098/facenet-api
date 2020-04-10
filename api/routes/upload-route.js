@@ -25,7 +25,7 @@ router.post("/image", checkBasicAuth, (req, res, next) => {
           let photo = req.files.photo;
           let fileName = student.name + "_" + Date.now();
           photo.mv(
-            "./core/train_img/" + student.name + "/" + fileName + ".jpg"
+            "./core/train_img/" + student.roll_no + "/" + fileName + ".jpg"
           );
           statusCode = 200;
           statusMessage = "File uploaded successfully";
