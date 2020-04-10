@@ -42,7 +42,12 @@ router.post("/signup", (req, res, next) => {
             statusCode: 400,
             statusMessage: "Name and/or Roll number missing"
           });
-        } else {
+        } else if (req.body.isAdmin === undefined){
+          return res.status(400).json({
+            statusCode: 400,
+            statusMessage: "User status is not set (Admin or Student)"
+          });
+        }else {
           console.log("Attempt to create new account : " + req.body.email);
 
           bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -59,7 +64,7 @@ router.post("/signup", (req, res, next) => {
                 password: hash,
                 roll_no: req.body.roll_no,
                 name: req.body.name,
-                admin: String(req.body.email).includes("harsh")
+                admin: req.body.isAdmin
               });
 
               newStudent
