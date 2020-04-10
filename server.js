@@ -37,6 +37,7 @@ Routes available:
 (POST) /api/student/reset_password
 
 (POST) /api/upload/image
+(POST) /api/upload/video
 
 (POST)  /api/train
 
