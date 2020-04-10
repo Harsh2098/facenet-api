@@ -16,7 +16,7 @@ app.use(
     fileUpload({
         createParentPath: true,
         limits: {
-            fileSize: 2 * 1024 * 1024 * 1024, //2MB max file(s) size
+            fileSize: 25 * 1024 * 1024 * 1024, //25MB max file(s) size
         },
     })
 );
