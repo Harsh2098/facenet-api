@@ -23,6 +23,17 @@ Install and Verify MongoDB
 sudo apt install -y mongodb
 sudo systemctl status mongodb
 ```
+In db/db.js Change
+
+```
+const DB_URI = "mongodb://mongo:27017/facenetdb";
+
+```
+To 
+
+```
+const DB_URI = "mongodb://localhost:27017/facenetdb";
+```
 
 # Run Locally
 

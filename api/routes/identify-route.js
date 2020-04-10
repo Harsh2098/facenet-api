@@ -26,14 +26,14 @@ router.post("/", checkAdminAuth, (req, res, next) => {
       console.log(stdout);
       var responseList = stdout.split(/\r?\n/);
 
-      var nameList = [];
+      var rollNoList = [];
       var probability = [];
       var successful = false,
         noOfFacesDetected = 0;
       responseList.forEach(function(item) {
-        if (item.includes("Name: ")) {
-          item = item.replace("Name: ", "");
-          nameList.push(item);
+        if (item.includes("Roll No: ")) {
+          item = item.replace("Roll No: ", "");
+          rollNoList.push(item);
         }
         if (item.includes("Probability: ")) {
           item = item.replace("Probability: ", "");
@@ -52,8 +52,8 @@ router.post("/", checkAdminAuth, (req, res, next) => {
       if (successful) {
         Student.find()
           .select("-_id -__v -password -admin")
-          .where("name")
-          .in(nameList)
+          .where("roll_no")
+          .in(rollNoList)
           .exec()
           .then(studentList => {
             if (studentList) {
