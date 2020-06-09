@@ -52,38 +52,57 @@ router.post("/", checkAdminAuth, (req, res, next) => {
 
 router.get("/", checkAdminAuth, (req, res, next) => {
     if (!req.body.date || !req.body.course_code) {
-        return res.status(400).json({
-            statusCode: 400,
-            statusMessage: "Attendence date/course code missing",
-        });
-    }
-
-    Attendence.find({
-        date: req.body.date,
-        course_code: req.body.course_code,
-    })
-        .select("-_id -__v")
-        .then((result) => {
-            if (result.length > 0) {
-                return res.status(200).json({
-                    statusCode: 200,
-                    statusMessage: "Sending attendence list",
-                    result,
+        Attendence.find()
+            .select("-_id -__v")
+            .then((result) => {
+                if (result.length > 0) {
+                    return res.status(200).json({
+                        statusCode: 200,
+                        statusMessage: "Sending attendence list",
+                        result,
+                    });
+                } else {
+                    return res.status(404).json({
+                        statusCode: 404,
+                        statusMessage: "No attendence records",
+                    });
+                }
+            })
+            .catch((err) => {
+                res.status(500).json({
+                    statusCode: 500,
+                    statusMessage: "Internal server error",
+                    error: err,
                 });
-            } else {
-                return res.status(404).json({
-                    statusCode: 404,
-                    statusMessage: "No attendence records",
-                });
-            }
-        })
-        .catch((err) => {
-            res.status(500).json({
-                statusCode: 500,
-                statusMessage: "Internal server error",
-                error: err,
             });
-        });
+    } else {
+        Attendence.find({
+            date: req.body.date,
+            course_code: req.body.course_code,
+        })
+            .select("-_id -__v")
+            .then((result) => {
+                if (result.length > 0) {
+                    return res.status(200).json({
+                        statusCode: 200,
+                        statusMessage: "Sending attendence list",
+                        result,
+                    });
+                } else {
+                    return res.status(404).json({
+                        statusCode: 404,
+                        statusMessage: "No attendence records",
+                    });
+                }
+            })
+            .catch((err) => {
+                res.status(500).json({
+                    statusCode: 500,
+                    statusMessage: "Internal server error",
+                    error: err,
+                });
+            });
+    }
 });
 
 router.delete("/", checkAdminAuth, (req, res, next) => {
